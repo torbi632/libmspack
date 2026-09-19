@@ -46,17 +46,13 @@ jobs:
           ./configure
           make -j2
 
-      - name: Upload artifacts
+      - name: Upload full folder
         uses: actions/upload-artifact@v4
         with:
-          name: libmspack-${{ matrix.os }}
-          if-no-files-found: ignore
-          path: |
-            libmspack/**/*.a
-            libmspack/**/*.so*
-            libmspack/**/*.dylib
-            libmspack/**/*.la
-            libmspack/**/*.pc
+          name: libmspack-${{ matrix.os }}-full
+          if-no-files-found: error
+          # 上传整个 libmspack 文件夹（包含源码、编译产物、生成的配置等所有内容）
+          path: libmspack/
 
   windows:
     name: Windows (MSYS2 / MinGW64)
@@ -78,6 +74,7 @@ jobs:
             libtool
             make
             pkg-config
+            git
             mingw-w64-x86_64-toolchain
 
       - name: Bootstrap and Build
@@ -85,20 +82,16 @@ jobs:
         run: |
           cd libmspack
           # 防止 Windows 换行符导致脚本无法执行
-          sed -i 's/\r$//' rebuild.sh
+          sed -i 's/\r$//' rebuild.sh cleanup.sh
           chmod +x rebuild.sh
           ./rebuild.sh
           ./configure
           make -j2
 
-      - name: Upload artifacts
+      - name: Upload full folder
         uses: actions/upload-artifact@v4
         with:
-          name: libmspack-windows
-          if-no-files-found: ignore
-          path: |
-            libmspack/**/*.a
-            libmspack/**/*.dll
-            libmspack/**/*.exe
-            libmspack/**/*.la
-            libmspack/**/*.pc
+          name: libmspack-windows-full
+          if-no-files-found: error
+          # 上传整个 libmspack 文件夹
+          path: libmspack/
